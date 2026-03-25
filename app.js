@@ -3,7 +3,7 @@ const add = require('./math');
 
 const app = express();
 
-// Root route
+// This is Root route
 app.get('/', (req, res) => {
   const sum = add(2, 3);
   res.send(`Sum is: ${sum}`);
