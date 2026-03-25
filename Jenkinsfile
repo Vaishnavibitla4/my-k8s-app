@@ -5,35 +5,35 @@ pipeline {
 
         stage('Checkout from GitHub') {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/laxmi916/node-k8s-app.git'
+                git branch: 'main',
+                    url: 'https://github.com/Vaishnavibitla4/node-k8s-app.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh '''
-                docker build -t my-k8s-app:${BUILD_NUMBER} .
-                docker tag my-k8s-app:${BUILD_NUMBER} laxmi916/my-k8s-app:latest
+                bat '''
+                docker build -t my-k8s-app:%BUILD_NUMBER% .
+                docker tag my-k8s-app:%BUILD_NUMBER% vaishnavibitla/my-k8s-app:v1
                 '''
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                sh 'docker push laxmi916/my-k8s-app:latest'
+                bat 'docker push vaishnavibitla/my-k8s-app:v1'
             }
         }
 
         stage('Start Minikube if not running') {
             steps {
-                sh '''
+                bat '''
                 if ! minikube status | grep -q "apiserver: Running"; then
                     echo "Minikube is not running. Starting now..."
                     minikube start --driver=docker --memory=2048 --cpus=2
@@ -44,9 +44,9 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh '''
+                bat '''
                 # Load latest image into Minikube
-                # minikube image load laxmi916/my-k8s-app:latest
+                # minikube image load laxmi916/my-k8s-app:v1
 
                 # Apply manifests
                 minikube kubectl -- apply -f k8s/deployment.yaml
